@@ -4,6 +4,7 @@ import SeatMap from "../../components/SeatMap";
 import SeatMapArenaX, { categories as arenaXCategories } from "../../components/SeatMapArenaX";
 import VenueMapCatwalkStage, { categories as catwalkCategories } from "../../components/VenueMapCatwalkStage";
 import VenueMapFanStage, { categories as fanStageCategories } from "../../components/VenueMapFanStage";
+import VenueMapDomeStage, { categories as domeStageCategories } from "../../components/VenueMapDomeStage";
 
 export default function SeatBooking({ selectedArtist, onBack }) {
   const getSeatMapConfig = () => {
@@ -15,6 +16,9 @@ export default function SeatBooking({ selectedArtist, onBack }) {
     }
     if (selectedArtist === "taylor-swift") {
       return { Component: VenueMapFanStage, categories: fanStageCategories };
+    }
+    if (selectedArtist === "the-neighbourhood") {
+      return { Component: VenueMapDomeStage, categories: domeStageCategories };
     }
     return { Component: SeatMap };
   };
