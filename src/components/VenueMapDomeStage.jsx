@@ -1,10 +1,17 @@
-import React, { useMemo, useState } from "react";
-import { Ticket, Plus, Minus } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Minus } from "lucide-react";
 
 /* ---------------------------------------------------------------
     Denah "Dome Stage" — kubah besar dengan 3 ring (CAT1/CAT2/CAT3),
     tiap ring terbagi Left / Center / Right, pit FESTIVAL + VVIP
     dekat panggung, FOH, dan catwalk kecil ke STAGE.
+
+    NOTE: Komponen ini HANYA bertugas merender peta interaktif.
+    Banner "Sisa tiket...", panel "DETAIL HARGA", quantity selector,
+    tombol "Beli Tiket", dan legend SEMUANYA sudah ditangani oleh
+    TicketPage (memakai `categories` yang diexport di bawah).
+    Jangan render ulang elemen-elemen itu di sini — itu penyebab
+    tampilan double di screenshot sebelumnya.
 ------------------------------------------------------------------ */
 const C = {
   bg: "#0B0B12",
@@ -61,13 +68,16 @@ function ring(catId, rInner, rOuter, color, prices) {
   return bands.map((b) => {
     const mid = midPoint((rInner + rOuter) / 2, b.aStart, b.aEnd);
     const isSide = b.part !== "center";
+    const remaining = prices[b.part].remaining;
+    const total = prices[b.part].total;
     return {
       id: `${catId}-${b.part}`,
       label: `${catId.toUpperCase()} ${b.part.toUpperCase()}`,
       color,
       price: prices[b.part].price,
-      remaining: prices[b.part].remaining,
-      total: prices[b.part].total,
+      remaining,
+      total,
+      statusText: remaining / total <= 0.15 ? "Hampir habis" : "Tersedia",
       shape: { kind: "arc", d: arcBand(rInner, rOuter, b.aStart, b.aEnd) },
       anchor: { x: mid[0], y: mid[1] },
       rotate: isSide ? -90 : 0,
@@ -82,6 +92,7 @@ export const ZONES = [
     price: 18500000,
     remaining: 6,
     total: 40,
+    statusText: "Hampir habis",
     color: C.hot,
     shape: { kind: "rect", x: 535, y: 590, w: 100, h: 55, rx: 8 },
     anchor: { x: 585, y: 617 },
@@ -93,6 +104,7 @@ export const ZONES = [
     price: 3600000,
     remaining: 40,
     total: 500,
+    statusText: "Tersedia",
     color: C.violet,
     shape: { kind: "rect", x: 395, y: 330, w: 380, h: 350, rx: 60 },
     anchor: { x: 585, y: 415 },
@@ -126,33 +138,24 @@ const LEGEND = [
 const VIEW = { minX: 0, minY: 0, w: 1170, h: 860 };
 const toPct = (x, y) => ({ left: `${(x / VIEW.w) * 100}%`, top: `${(y / VIEW.h) * 100}%` });
 
-export default function VenueMapDomeStage() {
+export default function VenueMapDomeStage({ selectedId, onSelect }) {
   const [zoom, setZoom] = useState(1);
-  const [active, setActive] = useState(null);
-  const [pinned, setPinned] = useState(false);
+  const [hovered, setHovered] = useState(null);
 
-  const overallPct = useMemo(() => {
-    const total = ZONES.reduce((s, z) => s + z.total, 0);
-    const remaining = ZONES.reduce((s, z) => s + z.remaining, 0);
-    return Math.round((remaining / total) * 100);
-  }, []);
+  // active zone hanya untuk styling hover/selected di dalam peta —
+  // detail harga/qty/beli tiket ditampilkan oleh TicketPage, bukan di sini.
+  const active = selectedId !== undefined ? selectedId : hovered;
 
-  const activeZone = ZONES.find((z) => z.id === active) || null;
+  const handleEnter = (id) => setHovered(id);
+  const handleLeave = () => setHovered(null);
 
-  const handleEnter = (id) => !pinned && setActive(id);
-  const handleLeave = () => !pinned && setActive(null);
   const handleClick = (id) => {
-    if (pinned && active === id) {
-      setPinned(false);
-      setActive(null);
-    } else {
-      setActive(id);
-      setPinned(true);
-    }
+    if (onSelect) onSelect(id);
+    setHovered(id);
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-6" style={{ background: C.bg }}>
+    <div className="w-full flex items-center justify-center" style={{ background: C.bg }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
         .vm-body { font-family: 'Space Grotesk', sans-serif; }
@@ -164,37 +167,20 @@ export default function VenueMapDomeStage() {
         .vm-zone:focus-visible { outline: 2px solid ${C.text}; outline-offset: 2px; }
       `}</style>
 
-      <div className="vm-body w-full max-w-7xl">
-        <h2 className="text-3xl md:text-4xl font-semibold mb-2" style={{ color: C.text }}>
-          Pilih Kategori Tempat Duduk
-        </h2>
-        <p className="text-base mb-6" style={{ color: C.muted }}>
-          Arahkan kursor atau ketuk area denah untuk melihat harga dan sisa tiket.
-        </p>
-
-        <div
-          className="flex items-center gap-2 rounded-xl px-5 py-3 mb-6"
-          style={{ background: "rgba(251,69,112,0.12)", border: `1px solid rgba(251,69,112,0.35)` }}
-        >
-          <Ticket size={18} style={{ color: C.hot }} />
-          <span className="vm-mono text-sm md:text-base" style={{ color: C.hot }}>
-            Sisa tiket {overallPct}%
-          </span>
-        </div>
-
+      <div className="vm-body w-full">
         <div
           className="relative rounded-3xl p-6 md:p-10"
           style={{ background: C.panel, border: `1px solid ${C.border}` }}
         >
           <div
-            className="absolute top-6 right-6 z-20 flex flex-col rounded-xl overflow-hidden"
+            className="absolute top-6 right-6 z-20 flex flex-col rounded-xl overflow-hidden shadow-lg"
             style={{ border: `1px solid ${C.border}` }}
           >
             <button
               type="button"
               aria-label="Perbesar"
               onClick={() => setZoom((z) => Math.min(1.8, +(z + 0.15).toFixed(2)))}
-              className="p-3 flex items-center justify-center"
+              className="p-3 flex items-center justify-center hover:bg-neutral-800 transition-colors"
               style={{ background: C.stage, color: C.text }}
             >
               <Plus size={18} />
@@ -204,7 +190,7 @@ export default function VenueMapDomeStage() {
               type="button"
               aria-label="Perkecil"
               onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.15).toFixed(2)))}
-              className="p-3 flex items-center justify-center"
+              className="p-3 flex items-center justify-center hover:bg-neutral-800 transition-colors"
               style={{ background: C.stage, color: C.text }}
             >
               <Minus size={18} />
@@ -303,30 +289,20 @@ export default function VenueMapDomeStage() {
                 ))}
               </svg>
 
-              {activeZone && (
+              {/* Tooltip minimalis tanpa harga */}
+              {hovered && ZONES.find((z) => z.id === hovered) && (
                 <div
-                  className="vm-body absolute z-30 -translate-x-1/2 -translate-y-full px-4 py-2.5 rounded-xl text-center"
+                  className="vm-body absolute z-30 -translate-x-1/2 -translate-y-full px-3 py-1.5 rounded-xl text-center shadow-xl"
                   style={{
-                    ...toPct(activeZone.anchor.x, activeZone.anchor.y - 26),
+                    ...toPct(ZONES.find((z) => z.id === hovered).anchor.x, ZONES.find((z) => z.id === hovered).anchor.y - 26),
                     background: C.stage,
-                    border: `1px solid ${activeZone.color}`,
-                    minWidth: 150,
-                    boxShadow: "0 12px 30px rgba(0,0,0,0.45)",
+                    border: `1px solid ${ZONES.find((z) => z.id === hovered).color}`,
                     pointerEvents: "none",
                   }}
                 >
-                  <p className="vm-mono text-sm font-bold" style={{ color: C.text }}>
-                    {fmtIDR(activeZone.price)}
+                  <p className="vm-mono text-xs font-bold uppercase tracking-wider" style={{ color: C.text }}>
+                    {ZONES.find((z) => z.id === hovered).label}
                   </p>
-                  {activeZone.remaining / activeZone.total <= 0.15 ? (
-                    <p className="vm-mono text-xs mt-0.5" style={{ color: C.hot }}>
-                      {activeZone.remaining} tersisa
-                    </p>
-                  ) : (
-                    <p className="vm-mono text-xs mt-0.5" style={{ color: "#4ADE80" }}>
-                      Tersedia
-                    </p>
-                  )}
                 </div>
               )}
             </div>
@@ -352,4 +328,9 @@ export const categories = ZONES.map((z) => ({
   ...z,
   hex: z.color,
   desc: "Akses area konser utama dan sekitarnya",
+  available: z.remaining > 0,
+  statusText: z.remaining / z.total <= 0.15 ? "Hampir habis" : "Tersedia",
+  // PricePanel reads `cat.left` (not `remaining`) for quantity limits
+  // and the "X tersedia" label — keep both in sync.
+  left: z.remaining,
 }));

@@ -7,14 +7,13 @@ export default function Login({ onSwitchToRegister }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logika autentikasi login Anda di sini
     console.log("Login submitted:", { email, password });
   };
 
   return (
     <div className="min-h-screen bg-[#0B0C10] text-white flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Efek Glow Ambient Latar Belakang */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#66FCF1]/10 blur-[120px] rounded-full pointer-events-none"></div>
+      {/* Efek Glow Ambient Latar Belakang - Diubah menjadi Oranye */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-orange-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
       <motion.div 
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -24,7 +23,8 @@ export default function Login({ onSwitchToRegister }) {
       >
         {/* Header Form */}
         <div className="text-center mb-8">
-          <span className="text-[#66FCF1] tracking-widest uppercase font-semibold text-xs">2AMSTAGE ACCESS</span>
+          {/* Warna Teks Aksen diubah menjadi orange-400 */}
+          <span className="text-orange-400 tracking-widest uppercase font-semibold text-xs">2AMSTAGE ACCESS</span>
           <h2 className="text-3xl font-black mt-2 tracking-tight">MASUK AKUN</h2>
           <p className="text-gray-400 text-sm mt-1">Lanjutkan war tiket impianmu dengan aman.</p>
         </div>
@@ -39,7 +39,8 @@ export default function Login({ onSwitchToRegister }) {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="nama@domain.com"
-              className="w-full bg-[#0B0C10]/80 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#66FCF1] transition-all"
+              /* Fokus border diubah menjadi orange-500 */
+              className="w-full bg-[#0B0C10]/80 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-all"
             />
           </div>
 
@@ -51,21 +52,24 @@ export default function Login({ onSwitchToRegister }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
-              className="w-full bg-[#0B0C10]/80 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#66FCF1] transition-all"
+              className="w-full bg-[#0B0C10]/80 border border-gray-800 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-orange-500 transition-all"
             />
           </div>
 
           <div className="flex items-center justify-between text-xs text-gray-400">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="rounded bg-gray-900 border-gray-800 text-[#66FCF1] focus:ring-0" />
+              {/* Checkbox accent color diubah (didukung browser modern) */}
+              <input type="checkbox" className="rounded bg-gray-900 border-gray-800 text-orange-600 focus:ring-orange-500 accent-orange-500" />
               <span>Ingat saya</span>
             </label>
-            <a href="#forgot" className="hover:text-[#66FCF1] transition-colors">Lupa password?</a>
+            {/* Link hover color diubah menjadi orange-400 */}
+            <a href="#forgot" className="hover:text-orange-400 transition-colors">Lupa password?</a>
           </div>
 
           <button 
             type="submit"
-            className="w-full bg-[#66FCF1] hover:bg-[#45A29E] text-gray-950 font-bold py-3.5 rounded-xl transition-all shadow-[0_0_20px_rgba(102,252,241,0.2)]"
+            /* Warna Tombol diubah dari bg-cyan menjadi bg-orange-600 dan hover-nya */
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)]"
           >
             Masuk Sekarang
           </button>
@@ -76,7 +80,8 @@ export default function Login({ onSwitchToRegister }) {
           Belum punya akun?{' '}
           <button 
             onClick={onSwitchToRegister}
-            className="text-[#66FCF1] font-semibold hover:underline ml-1"
+            /* Warna Teks Tombol Daftar diubah menjadi orange-400 */
+            className="text-orange-400 font-semibold hover:underline ml-1"
           >
             Daftar di sini
           </button>
