@@ -2,10 +2,9 @@ import React, { useMemo, useState } from "react";
 import { Ticket, Plus, Minus } from "lucide-react";
 
 /* ---------------------------------------------------------------
-   Denah "Dome Stage" — kubah besar dengan 3 ring (CAT1/CAT2/CAT3),
-   tiap ring terbagi Left / Center / Right, pit FESTIVAL + VVIP
-   dekat panggung, FOH, dan catwalk kecil ke STAGE. Ukuran dibuat
-   besar & lega (bukan versi mini seperti sebelumnya).
+    Denah "Dome Stage" — kubah besar dengan 3 ring (CAT1/CAT2/CAT3),
+    tiap ring terbagi Left / Center / Right, pit FESTIVAL + VVIP
+    dekat panggung, FOH, dan catwalk kecil ke STAGE.
 ------------------------------------------------------------------ */
 const C = {
   bg: "#0B0B12",
@@ -38,6 +37,7 @@ const polar = (r, angleDeg) => {
   const rad = (angleDeg * Math.PI) / 180;
   return [CX + r * Math.sin(rad), CY - r * Math.cos(rad)];
 };
+
 const arcBand = (rInner, rOuter, aStart, aEnd) => {
   const [x1, y1] = polar(rOuter, aStart);
   const [x2, y2] = polar(rOuter, aEnd);
@@ -45,6 +45,7 @@ const arcBand = (rInner, rOuter, aStart, aEnd) => {
   const [x4, y4] = polar(rInner, aStart);
   return `M ${x1} ${y1} A ${rOuter} ${rOuter} 0 0 1 ${x2} ${y2} L ${x3} ${y3} A ${rInner} ${rInner} 0 0 0 ${x4} ${y4} Z`;
 };
+
 const midPoint = (r, a1, a2) => polar(r, (a1 + a2) / 2);
 
 const [leftTopX, leftTopY] = polar(R_EDGE, -A_MAX);
@@ -74,7 +75,7 @@ function ring(catId, rInner, rOuter, color, prices) {
   });
 }
 
-const ZONES = [
+export const ZONES = [
   {
     id: "vvip",
     label: "VVIP",
@@ -220,10 +221,8 @@ export default function VenueMapDomeStage() {
               style={{ transform: `scale(${zoom})`, transformOrigin: "50% 50%", transition: "transform 250ms ease" }}
             >
               <svg viewBox={`${VIEW.minX} ${VIEW.minY} ${VIEW.w} ${VIEW.h}`} className="w-full h-full">
-                {/* silhouette */}
                 <path d={OUTER_PATH} fill={C.panel} stroke={C.border} strokeWidth="2" />
 
-                {/* rings drawn first so pit/vvip can layer on top */}
                 {ZONES.filter((z) => z.shape.kind === "arc").map((z) => {
                   const scarce = z.remaining / z.total <= 0.15;
                   const isActive = active === z.id;
@@ -247,7 +246,6 @@ export default function VenueMapDomeStage() {
                   );
                 })}
 
-                {/* festival pit + vvip layered above rings */}
                 {ZONES.filter((z) => z.shape.kind === "rect").map((z) => {
                   const scarce = z.remaining / z.total <= 0.15;
                   const isActive = active === z.id;
@@ -275,22 +273,18 @@ export default function VenueMapDomeStage() {
                   );
                 })}
 
-                {/* FOH (decorative) */}
                 <rect x="545" y="540" width="80" height="32" rx="4" fill={C.stage} />
                 <text x="585" y="561" textAnchor="middle" className="vm-mono" fontSize="13" fill={C.muted} letterSpacing="2">
                   FOH
                 </text>
 
-                {/* catwalk connector (decorative) */}
                 <rect x="555" y="645" width="60" height="60" fill={C.stage} />
 
-                {/* STAGE (decorative) */}
                 <rect x="470" y="700" width="230" height="120" rx="10" fill={C.stage} />
                 <text x="585" y="768" textAnchor="middle" className="vm-mono" fontSize="34" fontWeight="700" fill={C.text} letterSpacing="3">
                   STAGE
                 </text>
 
-                {/* labels */}
                 {ZONES.map((z) => (
                   <text
                     key={`label-${z.id}`}
@@ -309,7 +303,6 @@ export default function VenueMapDomeStage() {
                 ))}
               </svg>
 
-              {/* tooltip */}
               {activeZone && (
                 <div
                   className="vm-body absolute z-30 -translate-x-1/2 -translate-y-full px-4 py-2.5 rounded-xl text-center"
@@ -354,3 +347,9 @@ export default function VenueMapDomeStage() {
     </div>
   );
 }
+
+export const categories = ZONES.map((z) => ({
+  ...z,
+  hex: z.color,
+  desc: "Akses area konser utama dan sekitarnya",
+}));
