@@ -11,7 +11,7 @@ function App() {
   const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
 
   return (
-    <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
       <Navbar onNavigate={(view) => setCurrentView(view)} />
 
       <div className="pt-[90px]">
