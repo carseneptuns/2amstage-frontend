@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'midnights';
+    src: url(./assets/fonts/NeueHaasDisplayMediu.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    size-adjust: 100%;
+    ascent-override: 100%;
+    descent-override: 25%;
+    line-gap-override: 0%;
+}
