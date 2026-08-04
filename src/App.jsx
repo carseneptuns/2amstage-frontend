@@ -7,11 +7,15 @@ import ConcertDetail from "./pages/customer/ConcertDetail";
 import SeatBooking from "./pages/customer/SeatBooking";
 import PaymentPage from "./components/PaymentPage";
 import { AuthProvider } from "./context/AuthContext";
+import EventList from "./pages/admin/EventList";
+import EventForm from "./pages/admin/EventForm";
+import StageMapper from "./pages/admin/StageMapper";
 
 function AppContent() {
   const [currentView, setCurrentView] = useState("home");
   const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
   const [order, setOrder] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
@@ -72,6 +76,38 @@ function AppContent() {
 
         {currentView === "register" && (
           <Register onSwitchToLogin={() => setCurrentView("login")} />
+        )}
+        {currentView === "event-list" && (
+          <EventList
+            onNavigate={setCurrentView}
+            onEdit={(event) => {
+              setEditingEvent(event);
+              setCurrentView("event-edit");
+            }}
+          />
+        )}
+
+        {currentView === "event-create" && (
+          <EventForm
+            onSaved={() => setCurrentView("event-list")}
+            onCancel={() => setCurrentView("event-list")}
+          />
+        )}
+
+        {currentView === "event-edit" && (
+          <EventForm
+            existingEvent={editingEvent}
+            onSaved={() => setCurrentView("event-list")}
+            onCancel={() => setCurrentView("event-list")}
+          />
+        )}
+
+        {currentView === "stage-mapper" && (
+          <StageMapper
+            event={managingTicketsFor}
+            onBack={() => setCurrentView("event-list")}
+            onSaved={() => setCurrentView("event-list")}
+          />
         )}
       </div>
     </div>

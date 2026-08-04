@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 import { categories } from "../data/venueData";
 
-// --- geometry helpers -------------------------------------------------
-// Each "tier" is a rounded-bottom, open-top rectangle ("horseshoe").
-// A band is the ring-shaped area between an outer tier and the tier
-// nested inside it. Making outer tiers start higher (smaller `top`)
-// and wider than the ones inside them is what produces the angled,
-// fanned-out shoulders of the venue silhouette.
+
 function bandPath(o, i) {
   return (
     `M ${o.left} ${o.top} L ${o.left} ${o.bottom - o.r} Q ${o.left} ${o.bottom} ${o.left + o.r} ${o.bottom} ` +
@@ -22,7 +17,6 @@ function pitPath(p) {
   );
 }
 
-// Fixed tier geometry — tune these numbers to reshape the venue.
 const PIT = { left: 310, right: 490, top: 158, bottom: 378, r: 85 };
 const CAT1 = { left: 255, right: 545, top: 130, bottom: 428, r: 112 };
 const CAT2 = { left: 195, right: 605, top: 108, bottom: 488, r: 150 };
