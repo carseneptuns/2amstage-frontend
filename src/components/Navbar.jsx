@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar({ onNavigate }) {
   const [time, setTime] = useState("");
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const updateClock = () => {
@@ -18,6 +20,11 @@ function Navbar({ onNavigate }) {
     return () => clearInterval(interval);
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    onNavigate("home");
+  };
+
   return (
     <motion.nav
       initial={{ y: -80 }}
@@ -27,7 +34,6 @@ function Navbar({ onNavigate }) {
     >
       <div className="max-w-[1400px] mx-auto h-[90px] px-10 flex items-center justify-between font-midnights">
 
-        {/* Logo - Klik untuk kembali ke Home */}
         <h1 
           onClick={() => onNavigate("home")}
           className="text-4xl font-black tracking-wide cursor-pointer select-none"
@@ -36,13 +42,12 @@ function Navbar({ onNavigate }) {
           <span className="text-amber-400">STAGE</span>
         </h1>
 
-        {/* Menu */}
         <ul className="flex items-center gap-12">
-          {["Konser", "Tiket Saya", "Bantuan"].map((item) => (
+          {["Concert", "My Ticket", "Help"].map((item) => (
             <li 
               key={item} 
               onClick={() => {
-                if (item === "Konser") onNavigate("home");
+                if (item === "Concert") onNavigate("home");
               }}
               className="group cursor-pointer"
             >
@@ -54,7 +59,6 @@ function Navbar({ onNavigate }) {
           ))}
         </ul>
 
-        {/* Right */}
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse"></div>
@@ -63,13 +67,26 @@ function Navbar({ onNavigate }) {
             </span>
           </div>
 
-          {/* Tombol Masuk - Mengarahkan ke halaman login */}
-          <button 
-            onClick={() => onNavigate("login")}
-            className="px-7 py-2.5 rounded-full border border-white/30 text-white font-medium transition-all duration-300 hover:bg-violet-600 hover:border-violet-600 hover:shadow-[0_0_25px_rgba(139,92,246,.5)] cursor-pointer"
-          >
-            Masuk
-          </button>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span className="text-white font-medium">
+                Hi,  {user.nama} <span className="text-xs text-gray-400">({user.role})</span>
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-5 py-2.5 rounded-full border border-white/30 text-white font-medium transition-all duration-300 hover:bg-red-600 hover:border-red-600 cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => onNavigate("login")}
+              className="px-7 py-2.5 rounded-full border border-white/30 text-white font-medium transition-all duration-300 hover:bg-violet-600 hover:border-violet-600 hover:shadow-[0_0_25px_rgba(139,92,246,.5)] cursor-pointer"
+            >
+              Login
+            </button>
+          )}
         </div>
 
       </div>

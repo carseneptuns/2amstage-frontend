@@ -5,12 +5,13 @@ import Register from "./pages/auth/Register";
 import Home from "./pages/customer/Home";
 import ConcertDetail from "./pages/customer/ConcertDetail";
 import SeatBooking from "./pages/customer/SeatBooking";
-import PaymentPage from "./components/PaymentPage"; // tambahkan ini
+import PaymentPage from "./components/PaymentPage";
+import { AuthProvider } from "./context/AuthContext";
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState("home");
   const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
-  const [order, setOrder] = useState(null); // tambahkan ini
+  const [order, setOrder] = useState(null);
 
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
@@ -55,7 +56,18 @@ function App() {
         )}
 
         {currentView === "login" && (
-          <Login onSwitchToRegister={() => setCurrentView("register")} />
+          <Login
+            onSwitchToRegister={() => setCurrentView("register")}
+            onLoginSuccess={(user) => {
+              if (user.role === "super_admin" || user.role === "organizer") {
+                setCurrentView("dashboard");
+              } else if (user.role === "petugas") {
+                setCurrentView("scanner");
+              } else {
+                setCurrentView("home");
+              }
+            }}
+          />
         )}
 
         {currentView === "register" && (
@@ -66,4 +78,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  )
+}

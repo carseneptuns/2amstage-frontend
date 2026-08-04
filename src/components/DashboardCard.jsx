@@ -60,7 +60,7 @@ export const concertData = [
   {
     id: "ariana-grande",
     name: "ARIANA GRANDE",
-    subtitle: "Eternal Sunshine Live",
+    subtitle: "Petal",
     city: "Jakarta",
     genre: "Pop",
     status: "Tersedia",

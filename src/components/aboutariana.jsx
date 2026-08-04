@@ -62,7 +62,7 @@ export default function AboutJB({ onBuyTicket, onBack }) {
                 ARIANA GRANDE
               </h1>
               <p className="text-gray-300 font-medium text-sm md:text-base">
-                ETERNAL SUNSHINE Live<span className="text-gray-600">—</span> Jakarta Night
+                Petal<span className="text-gray-600">—</span> Jakarta Night
               </p>
             </div>
 
