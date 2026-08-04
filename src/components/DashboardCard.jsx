@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 
-// Import gambar dari assets/images (untuk card lineup)
+// Import gambar dari assets/images
 import ladyGagaImg from "../assets/images/lagaga.jpg";
 import justinBieberImg from "../assets/images/chella.jpg";
 import taylorSwiftImg from "../assets/images/telor.jpg";
 import arianaGrandeImg from "../assets/images/petal.jpg";
 import theNeighbourhoodImg from "../assets/images/f.jpg";
 
-// Data buat card listing SAJA. Gambar slider dan teks deskripsi panjang
-// khusus halaman detail ada di AboutEvent.jsx, bukan di sini.
+// Tambahkan keyword 'export' di sini agar bisa digunakan di file lain (seperti Aboutgaga.jsx)
 export const concertData = [
   {
     id: "lady-gaga",
@@ -20,7 +19,6 @@ export const concertData = [
     statusType: "warning",
     venue: "Jakarta International Stadium, Jakarta",
     date: "Sab, 26 Sep 2026",
-    time: "19.00 WIB",
     price: "Rp1.250.000",
     progress: "88%",
     image: ladyGagaImg,
@@ -37,7 +35,6 @@ export const concertData = [
     statusType: "success",
     venue: "Gelora Bung Karno Madya, Jakarta",
     date: "Min, 18 Okt 2026",
-    time: "21.00 WIB",
     price: "Rp950.000",
     progress: "32%",
     image: justinBieberImg,
@@ -54,7 +51,6 @@ export const concertData = [
     statusType: "soldout",
     venue: "ICE BSD, Tanggerang",
     date: "Sen, 02 Nov 2026",
-    time: "20.00 WIB",
     price: "Rp∞",
     progress: "100%",
     image: taylorSwiftImg,
@@ -71,7 +67,6 @@ export const concertData = [
     statusType: "success",
     venue: "Allianz Ecopark Ancol, Jakarta",
     date: "Jum, 20 Nov 2026",
-    time: "20.20 WIB",
     price: "Rp1.100.000",
     progress: "45%",
     image: arianaGrandeImg,
@@ -88,7 +83,6 @@ export const concertData = [
     statusType: "warning",
     venue: "Trans Studio Bandung, Bandung",
     date: "Rab, 09 Des 2026",
-    time: "21.30 WIB",
     price: "Rp850.000",
     progress: "90%",
     image: theNeighbourhoodImg,
@@ -99,15 +93,43 @@ export const concertData = [
 
 // Terima props onSelectArtist di sini
 export default function UpcomingConcertsSection({ onSelectArtist }) {
-  const [activeFilter, setActiveFilter] = useState("Semua");
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const filteredConcerts = concertData.filter((concert) => {
-    if (activeFilter === "Semua") return true;
-    if (activeFilter === "Jakarta") return concert.city === "Jakarta";
-    if (activeFilter === "Pop") return concert.genre === "Pop";
-    if (activeFilter === "Tersedia") return concert.status === "Tersedia";
-    return true;
-  });
+  useEffect(() => {
+    api
+      .get("/events")
+      .then((res) => setEvents(res.data))
+      .catch((err) => setError(err.response?.data?.message || "Gagal memuat data konser"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return "-";
+    return new Date(isoDate).toLocaleDateString("id-ID", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <section className="w-full bg-[#070A13] py-16 px-4 text-white text-center">
+        <p className="text-gray-400">Memuat konser...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="w-full bg-[#070A13] py-16 px-4 text-white text-center">
+        <p className="text-red-400">{error}</p>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full bg-[#070A13] py-16 px-4 md:px-8 text-white">
@@ -121,7 +143,7 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
           </h2>
         </div>
         <p className="text-gray-400 text-sm md:text-base max-w-sm">
-          5 artis, satu panggung digital. Kuota tiket real-time — begitu habis, langsung berubah jadi Sold Out.
+          {events.length} konser tersedia — kuota tiket real-time.
         </p>
       </div>
 
@@ -145,60 +167,63 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
         {filteredConcerts.map((concert) => (
           <div
             key={concert.id}
+            // Saat card diklik, panggil fungsi onSelectArtist dengan membawa ID artis
             onClick={() => onSelectArtist && onSelectArtist(concert.id)}
             className="relative rounded-2xl overflow-hidden border border-white/15 p-6 flex flex-col justify-between h-[420px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group bg-[#0C101A] cursor-pointer"
           >
-            <div
+            <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-40"
               style={{ backgroundImage: `url(${concert.image})` }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#090D16] via-[#090D16]/90 to-transparent"></div>
             </div>
 
-            <div className="relative z-10 flex flex-col justify-between h-full">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div></div>
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-md border ${concert.badgeStyle}`}
-                  >
-                    {concert.statusType !== "soldout" && (
+                <div className="relative z-10 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div></div>
                       <span
-                        className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                          concert.statusType === "success" ? "bg-emerald-400" : "bg-pink-400"
-                        }`}
-                      ></span>
-                    )}
-                    {concert.status}
-                  </span>
-                </div>
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase backdrop-blur-md border ${statusInfo.type === "success"
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                            : statusInfo.type === "soldout"
+                              ? "bg-zinc-800 text-zinc-400 border-zinc-700"
+                              : "bg-pink-500/10 text-pink-400 border-pink-500/30"
+                          }`}
+                      >
+                        {statusInfo.type !== "soldout" && (
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full animate-pulse ${statusInfo.type === "success" ? "bg-emerald-400" : "bg-pink-400"
+                              }`}
+                          ></span>
+                        )}
+                        {statusInfo.text}
+                      </span>
+                    </div>
 
-                <h3 className="font-black uppercase tracking-wider text-white text-2xl group-hover:text-amber-300 transition-colors">
-                  {concert.name}
-                </h3>
-                <p className="text-xs text-gray-400 mt-1 font-medium">
-                  {concert.subtitle}
-                </p>
-              </div>
-
-              <div>
-                <div className="flex flex-col gap-0.5 text-xs text-gray-300 mb-6 border-t border-white/10 pt-4">
-                  <span className="font-semibold text-white">{concert.venue}</span>
-                  <span className="text-gray-400">{concert.date}</span>
-                </div>
-
-                <div className="mb-4">
-                  <div className="flex justify-between items-center text-[11px] text-gray-400 mb-1.5">
-                    <span>Kuota terjual</span>
-                    <span className="font-mono">{concert.progress}</span>
+                    <h3 className="font-black uppercase tracking-wider text-white text-2xl group-hover:text-amber-300 transition-colors">
+                      {event.nama}
+                    </h3>
+                    <p className="text-xs text-gray-400 mt-1 font-medium">{event.artis}</p>
                   </div>
-                  <div className="w-full bg-black/60 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${concert.accentColor}`}
-                      style={{ width: concert.progress }}
-                    ></div>
-                  </div>
-                </div>
+
+                  <div>
+                    <div className="flex flex-col gap-0.5 text-xs text-gray-300 mb-6 border-t border-white/10 pt-4">
+                      <span className="font-semibold text-white">{event.lokasi}</span>
+                      <span className="text-gray-400">{formatDate(event.tanggal)}</span>
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center text-[11px] text-gray-400 mb-1.5">
+                        <span>Kuota terjual</span>
+                        <span className="font-mono">{progress}%</span>
+                      </div>
+                      <div className="w-full bg-black/60 rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-pink-500"
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
 
                 <div className="flex items-end justify-between">
                   <div>
@@ -212,6 +237,7 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         ))}

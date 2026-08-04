@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar({ onNavigate }) {
   const [time, setTime] = useState("");
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const updateClock = () => {
@@ -17,6 +19,13 @@ function Navbar({ onNavigate }) {
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    onNavigate("home");
+  };
+
+  const isAdmin = user && (user.role === "organizer" || user.role === "super_admin");
 
   return (
     <motion.nav
@@ -53,6 +62,16 @@ function Navbar({ onNavigate }) {
               <div className="h-[2px] w-0 bg-amber-400 rounded-full transition-all duration-300 group-hover:w-full mt-1"></div>
             </li>
           ))}
+
+          {/* Menu khusus admin/organizer */}
+          {isAdmin && (
+            <li onClick={() => onNavigate("event-list")} className="group cursor-pointer">
+              <span className="text-amber-300 font-medium transition-all duration-300 group-hover:text-white">
+                Kelola Event
+              </span>
+              <div className="h-[2px] w-0 bg-amber-400 rounded-full transition-all duration-300 group-hover:w-full mt-1"></div>
+            </li>
+          )}
         </ul>
 
         {/* Right */}
@@ -65,7 +84,7 @@ function Navbar({ onNavigate }) {
           </div>
 
           {/* Tombol Masuk - Mengarahkan ke halaman login */}
-          <button
+          <button 
             onClick={() => onNavigate("login")}
             className="px-7 py-2.5 rounded-full border border-white/30 text-white font-medium transition-all duration-300 hover:bg-violet-600 hover:border-violet-600 hover:shadow-[0_0_25px_rgba(139,92,246,.5)] cursor-pointer"
           >

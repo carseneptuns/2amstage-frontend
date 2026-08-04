@@ -1,7 +1,5 @@
 import { useMemo } from "react";
 
-// Category data specific to this stage layout — exported so TicketPage's
-// PricePanel/legend can show matching labels, prices, and colors.
 export const categories = [
   { id: "category2", label: "Category 2", desc: "Tribun terluar", price: 850000, left: 46, hex: "#a996f7" },
   { id: "platinum_tribune", label: "Platinum Tribune", desc: "Tribun berjenjang, pandangan luas", price: 1650000, left: 24, hex: "#8a76e8" },
@@ -9,13 +7,7 @@ export const categories = [
   { id: "vip_package", label: "VIP Package", desc: "Barisan terdepan, tepat di sisi panggung", price: 4750000, left: 4, hex: "#f2b807" },
 ];
 
-// --- geometry helpers ---------------------------------------------------
-// This layout is a full oval arena (closed loop, no open "mouth" like the
-// horseshoe map) with an X-shaped stage sitting dead center. The two outer
-// tiers are simple concentric ellipses; the two inner tiers (closest to
-// the stage) are split into four wedges — A (top) / B (right) / C (bottom)
-// / D (left) — the same way the reference venue divides its floor and VIP
-// packages around the stage.
+
 function epoint(cx, cy, rx, ry, deg) {
   const rad = (deg * Math.PI) / 180;
   return { x: cx + rx * Math.cos(rad), y: cy + ry * Math.sin(rad) };

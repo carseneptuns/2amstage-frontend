@@ -5,15 +5,12 @@ import Register from "./pages/auth/Register";
 import Home from "./pages/customer/Home";
 import ConcertDetail from "./pages/customer/ConcertDetail";
 import SeatBooking from "./pages/customer/SeatBooking";
-import PaymentPage from "./components/PaymentPage";
-import MyTickets from "./components/MyTickets"; // tambahkan ini
-import { concertData } from "./components/DashboardCard"; // sesuaikan path kalau concertData-nya sudah dipindah
+import PaymentPage from "./components/PaymentPage"; // tambahkan ini
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState("home");
   const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
-  const [order, setOrder] = useState(null);
-  const [tickets, setTickets] = useState([]); // tambahkan ini
+  const [order, setOrder] = useState(null); // tambahkan ini
 
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
@@ -83,15 +80,64 @@ function App() {
         )}
 
         {currentView === "login" && (
-          <Login onSwitchToRegister={() => setCurrentView("register")} />
+          <Login
+            onSwitchToRegister={() => setCurrentView("register")}
+            onLoginSuccess={(user) => {
+              if (user.role === "super_admin" || user.role === "organizer") {
+                setCurrentView("dashboard");
+              } else if (user.role === "petugas") {
+                setCurrentView("scanner");
+              } else {
+                setCurrentView("home");
+              }
+            }}
+          />
         )}
 
         {currentView === "register" && (
           <Register onSwitchToLogin={() => setCurrentView("login")} />
+        )}
+        {currentView === "event-list" && (
+          <EventList
+            onNavigate={setCurrentView}
+            onEdit={(event) => {
+              setEditingEvent(event);
+              setCurrentView("event-edit");
+            }}
+          />
+        )}
+
+        {currentView === "event-create" && (
+          <EventForm
+            onSaved={() => setCurrentView("event-list")}
+            onCancel={() => setCurrentView("event-list")}
+          />
+        )}
+
+        {currentView === "event-edit" && (
+          <EventForm
+            existingEvent={editingEvent}
+            onSaved={() => setCurrentView("event-list")}
+            onCancel={() => setCurrentView("event-list")}
+          />
+        )}
+
+        {currentView === "stage-mapper" && (
+          <StageMapper
+            event={managingTicketsFor}
+            onBack={() => setCurrentView("event-list")}
+            onSaved={() => setCurrentView("event-list")}
+          />
         )}
       </div>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  )
+}

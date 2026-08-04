@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 
-// Import gambar lokal
 import ladyGagaImg from "../assets/images/ladygaga.jpg";
 import justinBieberImg from "../assets/images/justin.jpg";
 import taylorSwiftImg from "../assets/images/taylor.jpg";
 import arianaGrandeImg from "../assets/images/ariana.jpg";
 import theNeighbourhoodImg from "../assets/images/thenbhd.jpg";
 
-// Data untuk 5 artis (name = untuk hover gambar, marqueeName = untuk teks berjalan)
 const artists = [
   { id: "lady-gaga", name: "Lady Gaga", marqueeName: "Lady Gaga", image: ladyGagaImg },
   { id: "justin-bieber", name: "Justin Bieber", marqueeName: "Justin Bieber", image: justinBieberImg },
