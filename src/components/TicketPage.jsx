@@ -13,8 +13,8 @@ import { rupiah, categories as defaultCategories } from "../data/venueData";
  *
  * Omit `seatMap` entirely to get the original horseshoe layout.
  */
-export default function TicketPage({ onBack, seatMap }) {
-  const SeatMapComponent = seatMap?.Component || SeatMap;
+export default function TicketPage({ onBack, seatMap, onProceedToPayment }) {
+const SeatMapComponent = seatMap?.Component || SeatMap;
   const categories = seatMap?.categories || defaultCategories;
 
   const [selectedId, setSelectedId] = useState(null);
