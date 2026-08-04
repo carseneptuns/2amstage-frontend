@@ -19,11 +19,14 @@ export default function TicketPage({ onBack, seatMap }) {
 
   const [selectedId, setSelectedId] = useState(null);
 
-  const handleBuy = ({ category, qty, total }) => {
-    // Replace with real checkout / cart logic.
-    alert(`Prototipe: ${qty}x tiket ${category.label} — Total ${rupiah(total)}`);
-  };
-
+  const handleBuy = (order) => {
+  if (onProceedToPayment) {
+    onProceedToPayment(order); // { category, qty, total }
+  } else {
+    // Fallback kalau dipakai tanpa halaman pembayaran (masih bisa jalan sendiri)
+    alert(`Prototipe: ${order.qty}x tiket ${order.category.label} — Total ${rupiah(order.total)}`);
+  }
+};
   return (
     <main className="px-[6vw] pb-[100px]">
       {onBack && (

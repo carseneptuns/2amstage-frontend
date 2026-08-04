@@ -4,18 +4,19 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/customer/Home";
 import ConcertDetail from "./pages/customer/ConcertDetail";
-import SeatBooking from "./pages/customer/SeatBooking"; // Import halaman SeatBooking yang baru
+import SeatBooking from "./pages/customer/SeatBooking";
+import PaymentPage from "./components/PaymentPage"; // tambahkan ini
 
 function App() {
   const [currentView, setCurrentView] = useState("home");
   const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
+  const [order, setOrder] = useState(null); // tambahkan ini
 
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
       <Navbar onNavigate={(view) => setCurrentView(view)} />
 
       <div className="pt-[90px]">
-        {/* Tampilan Halaman Utama (Home) */}
         {currentView === "home" && (
           <Home
             onSelectArtist={(artistKey) => {
@@ -25,29 +26,38 @@ function App() {
           />
         )}
 
-        {/* Tampilan Halaman Detail Konser */}
         {currentView === "detail-konser" && (
-          <ConcertDetail 
+          <ConcertDetail
             selectedArtist={selectedArtist}
             onBack={() => setCurrentView("home")}
             onBuyTicket={() => setCurrentView("beli-tiket")}
           />
         )}
 
-        {/* Tampilan Halaman Pembelian Tiket & Seat Booking */}
         {currentView === "beli-tiket" && (
           <SeatBooking
             selectedArtist={selectedArtist}
             onBack={() => setCurrentView("detail-konser")}
+            onProceedToPayment={(order) => {
+              setOrder(order);
+              setCurrentView("pembayaran");
+            }}
           />
         )}
 
-        {/* Tampilan Halaman Login */}
+        {/* tambahkan blok ini */}
+        {currentView === "pembayaran" && (
+          <PaymentPage
+            order={order}
+            onBack={() => setCurrentView("beli-tiket")}
+            onConfirm={(info) => alert(`Konfirmasi: ${JSON.stringify(info)}`)}
+          />
+        )}
+
         {currentView === "login" && (
           <Login onSwitchToRegister={() => setCurrentView("register")} />
         )}
 
-        {/* Tampilan Halaman Register */}
         {currentView === "register" && (
           <Register onSwitchToLogin={() => setCurrentView("login")} />
         )}

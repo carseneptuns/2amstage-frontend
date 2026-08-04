@@ -92,4 +92,4 @@ export default function Register({ onSwitchToLogin }) {
       </motion.div>
     </div>
   );
-}
+} 

@@ -6,7 +6,7 @@ import VenueMapCatwalkStage, { categories as catwalkCategories } from "../../com
 import VenueMapFanStage, { categories as fanStageCategories } from "../../components/VenueMapFanStage";
 import VenueMapDomeStage, { categories as domeStageCategories } from "../../components/VenueMapDomeStage";
 
-export default function SeatBooking({ selectedArtist, onBack }) {
+export default function SeatBooking({ selectedArtist, onBack, onProceedToPayment }) {
   const getSeatMapConfig = () => {
     if (selectedArtist === "justin-bieber") {
       return { Component: SeatMapArenaX, categories: arenaXCategories };
@@ -30,6 +30,7 @@ export default function SeatBooking({ selectedArtist, onBack }) {
       <TicketPage
         onBack={onBack}
         seatMap={seatMapConfig}
+        onProceedToPayment={onProceedToPayment}
       />
     </div>
   );
