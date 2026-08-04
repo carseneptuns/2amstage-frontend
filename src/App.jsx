@@ -50,7 +50,7 @@ function App() {
           <PaymentPage
             order={order}
             onBack={() => setCurrentView("beli-tiket")}
-            onConfirm={(info) => alert(`Konfirmasi: ${JSON.stringify(info)}`)}
+            onConfirm={() => setCurrentView("home")}
           />
         )}
 
