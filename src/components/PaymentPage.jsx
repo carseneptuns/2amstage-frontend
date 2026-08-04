@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { rupiah } from "../data/venueData";
 
 const PAYMENT_METHODS = [
@@ -241,7 +242,19 @@ export default function PaymentPage({ order, onBack, onConfirm }) {
           </div>
 
           <button
-            onClick={() => onConfirm && onConfirm({ method, bank: method === "transfer" ? bank : null, total: grandTotal })}
+            onClick={() => {
+              Swal.fire({
+                icon: "success",
+                title: "Pembayaran Berhasil",
+                text: "QR tiket akan dikirimkan lewat email, silahkan tunggu. Terima kasih.",
+                confirmButtonText: "Oke",
+                confirmButtonColor: "#9d8cf5",
+                background: "#171725",
+                color: "#f3f2f8",
+              }).then(() => {
+                onConfirm && onConfirm({ method, bank: method === "transfer" ? bank : null, total: grandTotal });
+              });
+            }}
             className="bg-gradient-to-r from-[#7a68d6] to-[#9d8cf5] text-white border-none py-3.5 rounded-xl text-[15px] font-extrabold hover:brightness-110 transition"
           >
             Saya Sudah Bayar
