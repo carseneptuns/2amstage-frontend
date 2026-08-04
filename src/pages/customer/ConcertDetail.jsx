@@ -1,30 +1,13 @@
 import React from "react";
-import Aboutgaga from "../../components/Aboutgaga";
-import AboutJB from "../../components/AboutJB";
-import Aboutswift from "../../components/aboutswift";
-import AboutAriana from "../../components/aboutariana";
-import AboutThenbhd from "../../components/aboutnbhd";
+import AboutEvent from "../../components/AboutEvent";
+import { concertData } from "../../components/DashboardCard";
 
 export default function ConcertDetail({ selectedArtist, onBack, onBuyTicket }) {
-  const renderDetailContent = () => {
-    switch (selectedArtist) {
-      case "justin-bieber":
-        return <AboutJB onBack={onBack} onBuyTicket={onBuyTicket} />;
-      case "taylor-swift":
-        return <Aboutswift artistId={selectedArtist} onBack={onBack} onBuyTicket={onBuyTicket} />;
-      case "ariana-grande":
-        return <AboutAriana onBack={onBack} onBuyTicket={onBuyTicket} />;
-      case "the-neighbourhood":
-        return <AboutThenbhd onBack={onBack} onBuyTicket={onBuyTicket} />;
-      case "lady-gaga":
-      default:
-        return <Aboutgaga artistId={selectedArtist} onBack={onBack} onBuyTicket={onBuyTicket} />;
-    }
-  };
+  const concert = concertData.find((c) => c.id === selectedArtist);
 
   return (
     <div className="w-full">
-      {renderDetailContent()}
+      <AboutEvent concert={concert} onBack={onBack} onBuyTicket={onBuyTicket} />
     </div>
   );
 }

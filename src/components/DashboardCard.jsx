@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 
-// Import gambar dari assets/images
+// Import gambar dari assets/images (untuk card lineup)
 import ladyGagaImg from "../assets/images/lagaga.jpg";
 import justinBieberImg from "../assets/images/chella.jpg";
 import taylorSwiftImg from "../assets/images/telor.jpg";
 import arianaGrandeImg from "../assets/images/petal.jpg";
 import theNeighbourhoodImg from "../assets/images/f.jpg";
 
-// Tambahkan keyword 'export' di sini agar bisa digunakan di file lain (seperti Aboutgaga.jsx)
+// Data buat card listing SAJA. Gambar slider dan teks deskripsi panjang
+// khusus halaman detail ada di AboutEvent.jsx, bukan di sini.
 export const concertData = [
   {
     id: "lady-gaga",
@@ -19,6 +20,7 @@ export const concertData = [
     statusType: "warning",
     venue: "Jakarta International Stadium, Jakarta",
     date: "Sab, 26 Sep 2026",
+    time: "19.00 WIB",
     price: "Rp1.250.000",
     progress: "88%",
     image: ladyGagaImg,
@@ -35,6 +37,7 @@ export const concertData = [
     statusType: "success",
     venue: "Gelora Bung Karno Madya, Jakarta",
     date: "Min, 18 Okt 2026",
+    time: "21.00 WIB",
     price: "Rp950.000",
     progress: "32%",
     image: justinBieberImg,
@@ -51,6 +54,7 @@ export const concertData = [
     statusType: "soldout",
     venue: "ICE BSD, Tanggerang",
     date: "Sen, 02 Nov 2026",
+    time: "20.00 WIB",
     price: "Rp∞",
     progress: "100%",
     image: taylorSwiftImg,
@@ -67,6 +71,7 @@ export const concertData = [
     statusType: "success",
     venue: "Allianz Ecopark Ancol, Jakarta",
     date: "Jum, 20 Nov 2026",
+    time: "20.20 WIB",
     price: "Rp1.100.000",
     progress: "45%",
     image: arianaGrandeImg,
@@ -83,6 +88,7 @@ export const concertData = [
     statusType: "warning",
     venue: "Trans Studio Bandung, Bandung",
     date: "Rab, 09 Des 2026",
+    time: "21.30 WIB",
     price: "Rp850.000",
     progress: "90%",
     image: theNeighbourhoodImg,
@@ -139,11 +145,10 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
         {filteredConcerts.map((concert) => (
           <div
             key={concert.id}
-            // Saat card diklik, panggil fungsi onSelectArtist dengan membawa ID artis
             onClick={() => onSelectArtist && onSelectArtist(concert.id)}
             className="relative rounded-2xl overflow-hidden border border-white/15 p-6 flex flex-col justify-between h-[420px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl group bg-[#0C101A] cursor-pointer"
           >
-            <div 
+            <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 opacity-40"
               style={{ backgroundImage: `url(${concert.image})` }}
             >
@@ -207,7 +212,6 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
         ))}
