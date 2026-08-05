@@ -5,18 +5,14 @@ import Register from "./pages/auth/Register";
 import Home from "./pages/customer/Home";
 import ConcertDetail from "./pages/customer/ConcertDetail";
 import SeatBooking from "./pages/customer/SeatBooking";
-import PaymentPage from "./components/PaymentPage";
-import { AuthProvider } from "./context/AuthContext";
-import EventList from "./pages/admin/EventList";
-import EventForm from "./pages/admin/EventForm";
-import StageMapper from "./pages/admin/StageMapper";
+import PaymentPage from "./components/PaymentPage"; // tambahkan ini
 
 function AppContent() {
   const [currentView, setCurrentView] = useState("home");
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
   const [order, setOrder] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
-  const [managingTicketsFor, setManagingTicketsFor] = useState(null);
+
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
       <Navbar onNavigate={(view) => setCurrentView(view)} />
@@ -43,13 +39,38 @@ function AppContent() {
           />
         )}
 
-        {/* tambahkan blok ini */}
         {currentView === "pembayaran" && (
           <PaymentPage
             order={order}
             onBack={() => setCurrentView("beli-tiket")}
-            onConfirm={() => setCurrentView("home")}
+            onConfirm={(paymentInfo) => {
+              const concert = concertData.find((c) => c.id === selectedArtist);
+              setTickets((prev) => [
+                {
+                  id: Date.now(),
+                  code: "2AMS-" + Date.now().toString(36).toUpperCase(),
+                  artistName: concert?.name || order.category.label,
+                  subtitle: concert?.subtitle,
+                  venue: concert?.venue,
+                  concertDate: concert?.date,
+                  category: order.category,
+                  qty: order.qty,
+                  total: paymentInfo.total,
+                  method: paymentInfo.method,
+                  bank: paymentInfo.bank,
+                  purchasedAt: new Date().toISOString(),
+                  status: "lunas",
+                },
+                ...prev,
+              ]);
+              setCurrentView("tiket-saya");
+            }}
           />
+        )}
+
+        {/* tambahkan blok ini */}
+        {currentView === "tiket-saya" && (
+          <MyTickets tickets={tickets} onBack={() => setCurrentView("home")} />
         )}
 
         {currentView === "login" && (
