@@ -13,10 +13,10 @@ import StageMapper from "./pages/admin/StageMapper";
 
 function AppContent() {
   const [currentView, setCurrentView] = useState("home");
-  const [selectedArtist, setSelectedArtist] = useState("lady-gaga");
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const [order, setOrder] = useState(null);
   const [editingEvent, setEditingEvent] = useState(null);
-
+  const [managingTicketsFor, setManagingTicketsFor] = useState(null);
   return (
     <div className="min-h-screen bg-[#070A13] text-white overflow-x-hidden font-midnights">
       <Navbar onNavigate={(view) => setCurrentView(view)} />
@@ -24,24 +24,17 @@ function AppContent() {
       <div className="pt-[90px]">
         {currentView === "home" && (
           <Home
-            onSelectArtist={(artistKey) => {
-              setSelectedArtist(artistKey);
+            onSelectArtist={(eventId) => {
+              setSelectedEventId(eventId);
               setCurrentView("detail-konser");
             }}
           />
         )}
 
-        {currentView === "detail-konser" && (
-          <ConcertDetail
-            selectedArtist={selectedArtist}
-            onBack={() => setCurrentView("home")}
-            onBuyTicket={() => setCurrentView("beli-tiket")}
-          />
-        )}
 
         {currentView === "beli-tiket" && (
           <SeatBooking
-            selectedArtist={selectedArtist}
+            eventId={selectedEventId}
             onBack={() => setCurrentView("detail-konser")}
             onProceedToPayment={(order) => {
               setOrder(order);
@@ -107,6 +100,13 @@ function AppContent() {
             event={managingTicketsFor}
             onBack={() => setCurrentView("event-list")}
             onSaved={() => setCurrentView("event-list")}
+          />
+        )}
+        {currentView === "detail-konser" && (
+          <ConcertDetail
+            eventId={selectedEventId}
+            onBack={() => setCurrentView("home")}
+            onBuyTicket={() => setCurrentView("beli-tiket")}
           />
         )}
       </div>

@@ -8,7 +8,9 @@ export default function Home({ onSelectArtist }) {
   return (
     <>
       <HeroSection />
-      <UpcomingConcertsSection onSelectArtist={onSelectArtist} />
+      <UpcomingConcertsSection
+        onSelectArtist={onSelectArtist}
+      />
       <EventStage />
       <Footer />
     </>

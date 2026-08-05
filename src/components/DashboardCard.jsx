@@ -139,7 +139,7 @@ export default function UpcomingConcertsSection({ onSelectArtist }) {
                     <div className="flex items-end justify-between">
                       <div>
                         <span className="text-[10px] uppercase text-gray-400 block mb-0.5 tracking-wider">
-                          MULAI DARI
+                          Start From
                         </span>
                         <span className="text-base font-black text-white">
                           {event.harga_termurah

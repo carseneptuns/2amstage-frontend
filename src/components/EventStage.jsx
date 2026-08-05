@@ -8,7 +8,6 @@ const C = {
   surfaceAlt: "#181826",
   border: "#26263A",
 
-  // Orange utama
   orange: "#F59E0B",
   orangeSoft: "#FBBF24",
   orangeDark: "#D97706",
@@ -55,8 +54,7 @@ export default function AboutEventStage() {
   const sectionRef = useRef(null);
   const hasRun = useRef(false);
   const timers = useRef([]);
-  const [phase, setPhase] = useState("pre"); // pre -> am -> stage -> slide -> done
-
+  const [phase, setPhase] = useState("pre"); 
   useEffect(() => {
     const node = sectionRef.current;
     if (!node) return;

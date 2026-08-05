@@ -4,27 +4,28 @@ import PricePanel from "./PricePanel";
 import SetlistStrip from "./SetlistStrip";
 import { rupiah, categories as defaultCategories } from "../data/venueData";
 
-/**
- * `seatMap` lets each artist page plug in its own venue layout without
- * touching anything else on this page:
- *
- *   import SeatMapArenaX, { categories as arenaXCategories } from "./SeatMapArenaX";
- *   <TicketPage seatMap={{ Component: SeatMapArenaX, categories: arenaXCategories }} />
- *
- * Omit `seatMap` entirely to get the original horseshoe layout.
- */
-export default function TicketPage({ onBack, seatMap, onProceedToPayment }) {
-const SeatMapComponent = seatMap?.Component || SeatMap;
+export default function TicketPage({ onBack, seatMap, onProceedToPayment, event }) {
+  const SeatMapComponent = seatMap?.Component || SeatMap;
   const categories = seatMap?.categories || defaultCategories;
 
   const [selectedId, setSelectedId] = useState(null);
 
   const handleBuy = (order) => {
-  if (onProceedToPayment) {
-    onProceedToPayment(order); // { category, qty, total }
-  } else {
-    // Fallback kalau dipakai tanpa halaman pembayaran (masih bisa jalan sendiri)
-    alert(`Prototipe: ${order.qty}x tiket ${order.category.label} — Total ${rupiah(order.total)}`);
+    const enrichedOrder = {
+      event_id: event.id,
+      ticket_category_id: order.category.ticket_category_id, // id asli, bukan zone id
+      nama_kategori: order.category.label,
+      jumlah: order.qty,
+      harga_satuan: order.category.price,
+      total: order.total,
+    };
+      if(onProceedToPayment) {
+        onProceedToPayment(order); // { category, qty, total }
+      } else {
+        // Fallback kalau dipakai tanpa halaman pembayaran (masih bisa jalan sendiri)
+        alert(`Prototipe: ${order.qty
+      }x tiket ${ order.category.label } — Total ${ rupiah(order.total)
+  }`);
   }
 };
   return (
